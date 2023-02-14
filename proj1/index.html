@@ -162,150 +162,173 @@
 
     <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
     <p>
-      Pixel sampling is the act of sampling for the color of a pixel from a texture. In my implementation, I use much of the same code as I did for rasterizing color interpolated triangles, with the barycentric coordinates, but instead used those coordinates to interpolate the uv values of each vertex. I then use those uv values to sample the texture at the given point. 
+      Pixel sampling is the act of sampling for the color of a pixel from a texture. In my implementation, I use much of
+      the same code as I did for rasterizing color interpolated triangles, with the barycentric coordinates, but instead
+      used those coordinates to interpolate the uv values of each vertex. I then use those uv values to sample the
+      texture at the given point.
       <br>
       <br>
-      In nearest neighbor sampling, I round the uv values to the nearest point, and then sample the color at that point in the texture. This is very simple, but the results can be blocky because the color of the pixel is only based on the color of the nearest point in the texture rather than taking into account the surrounding points like in bilinear sampling.
+      In nearest neighbor sampling, I round the uv values to the nearest point, and then sample the color at that point
+      in the texture. This is very simple, but the results can be blocky because the color of the pixel is only based on
+      the color of the nearest point in the texture rather than taking into account the surrounding points like in
+      bilinear sampling.
       <br>
       <br>
-      In bilinear sampling, I take the four nearest points in the texture to the given uv value and interpolate the color of the pixel based on the colors of those four points. This gives a smoother/better looking result than nearest neighbor sampling.
+      In bilinear sampling, I take the four nearest points in the texture to the given uv value and interpolate the
+      color of the pixel based on the colors of those four points. This gives a smoother/better looking result than
+      nearest neighbor sampling.
       <br>
       <br>
-      Below we can see a textured berkeley logo with nearest sampling at 1 sample per pixel, nearest sampling at 16 samples per pixel, bilinear sampling at 1 sample per pixel, and bilinear sampling at 16 samples per pixel.
+      Below we can see a textured berkeley logo with nearest sampling at 1 sample per pixel, nearest sampling at 16
+      samples per pixel, bilinear sampling at 1 sample per pixel, and bilinear sampling at 16 samples per pixel.
     </p>
     <div align="middle">
       <table style="width=100%">
         <tr>
           <td>
-            <img src="images/nearest1.png" align="middle" width="400px"/>
+            <img src="images/nearest1.png" align="middle" width="400px" />
             <figcaption align="middle">nearest sampling at 1 sample per pixel</figcaption>
           </td>
           <td>
-            <img src="images/bilinear1.png" align="middle" width="400px"/>
+            <img src="images/bilinear1.png" align="middle" width="400px" />
             <figcaption align="middle">bilinear sampling at 1 sample per pixel</figcaption>
           </td>
         </tr>
         <br>
         <tr>
           <td>
-            <img src="images/nearest16.png" align="middle" width="400px"/>
+            <img src="images/nearest16.png" align="middle" width="400px" />
             <figcaption align="middle">nearest sampling at 16 sample per pixel</figcaption>
           </td>
           <td>
-            <img src="images/bilinear16.png" align="middle" width="400px"/>
+            <img src="images/bilinear16.png" align="middle" width="400px" />
             <figcaption align="middle">bilinear sampling at 16 sample per pixel</figcaption>
           </td>
         </tr>
       </table>
     </div>
     <p>
-      We can see that the difference between nearest and bilinear sampling at 1 sample per pixel is very apparent. The bilinear sampled texture looks a lot smoother than the nearest neighbor sampled texture. It, in fact, actually looks relatively similar to the nearest sampling at 16 samples per pixel in smoothness. Going from nearest to bilinear sampling at 16 samples per pixel, however, does not result in nearly as much visual improvement as it did at 1 sample per pixel. The large difference is most apparent at lower samples per pixel. This is because at 1 sample per pixel, nearest sampling is simply grabbing the closest texel in the texture, while bilinear sampling is actually interpolating the color of the pixel based on the colors of the surrounding texels. At 16 samples per pixel, however, the difference between nearest and bilinear sampling is much less apparent because the pixels are already being created from multiple sample points, and the difference between the colors of the nearest texels and the interpolated color is much less noticeable.
+      We can see that the difference between nearest and bilinear sampling at 1 sample per pixel is very apparent. The
+      bilinear sampled texture looks a lot smoother than the nearest neighbor sampled texture. It, in fact, actually
+      looks relatively similar to the nearest sampling at 16 samples per pixel in smoothness. Going from nearest to
+      bilinear sampling at 16 samples per pixel, however, does not result in nearly as much visual improvement as it did
+      at 1 sample per pixel. The large difference is most apparent at lower samples per pixel. This is because at 1
+      sample per pixel, nearest sampling is simply grabbing the closest texel in the texture, while bilinear sampling is
+      actually interpolating the color of the pixel based on the colors of the surrounding texels. At 16 samples per
+      pixel, however, the difference between nearest and bilinear sampling is much less apparent because the pixels are
+      already being created from multiple sample points, and the difference between the colors of the nearest texels and
+      the interpolated color is much less noticeable.
     </p>
 
     <h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
     <p>
-      Level sampling works by having multiple maps of the same texture but with differing levels of resolution called mipmaps. These are used to reduce aliasing especially when dealing with objects/textures far from the camera while not increasing the rendering time when compared to bilinear sampling. Mipmaps have levels, each of which has a height and width which is a factor of 2 smaller than the previous level. We determine the level of the mipmap getting the dx_uv and dy_uv, taking the max of the norms of those, then taking the log base 2 of that to get a float level value. We then either round to the nearest level or linearly sample between the two nearest levels. 
+      Level sampling works by having multiple maps of the same texture but with differing levels of resolution called
+      mipmaps. These are used to reduce aliasing especially when dealing with objects/textures far from the camera while
+      not increasing the rendering time when compared to bilinear sampling. Mipmaps have levels, each of which has a
+      height and width which is a factor of 2 smaller than the previous level. We determine the level of the mipmap
+      getting the dx_uv and dy_uv, taking the max of the norms of those, then taking the log base 2 of that to get a
+      float level value. We then either round to the nearest level or linearly sample between the two nearest levels.
       <br>
       <br>
-      <ol>
-        <li>
-          Pixel sampling:
-          <ul>
-            <li>
-              Nearest neighbor sampling
-              <br>
-              Speed: fast
-              <br>
-              Memory usage: N/A
-              <br>
-              Antialiasing power: none
-            </li>
-            <li>Bilinear sampling
-              <br>
-              Speed: slow
-              <br>
-              Memory usage: N/A
-              <br>
-              Antialiasing power: reduce jaggies
-            </li>
-          </ul>
-        </li>
-        <li>
-          Level sampling:
-          <ul>
-            <li>
-              Level 0 sampling
-              <br>
-              Speed: fastest
-              <br>
-              Memory usage: 1 texture
-              <br>
-              Antialiasing power: none
-            </li>
-            <li>
-              Nearest level sampling
-              <br>
-              Speed: fast
-              <br>
-              Memory usage: based on number of texture levels
-              <br>
-              Antialiasing power: better than nothing
-            </li>
-            <li>
-              Linear level sampling
-              <br>
-              Speed: slow
-              <br>
-              Memory usage: based on number of texture levels
-              <br>
-              Antialiasing power: smooth
-            </li>
-          </ul>
-        </li>
-        <li>
-          Number of samples per pixel:
-          <ul>
-            <li>
-              1 sample per pixel
-              <br>
-              Speed: fastest
-              <br>
-              Memory usage: N/A
-              <br>
-              Antialiasing power: none
-            </li>
-            <li>
-              16 samples per pixel
-              <br>
-              Speed: slow
-              <br>
-              Memory usage: N/A
-              <br>
-              Antialiasing power: smooth
-            </li>
-        </li>
-      </ol>
+    <ol>
+      <li>
+        Pixel sampling:
+        <ul>
+          <li>
+            Nearest neighbor sampling
+            <br>
+            Speed: fast
+            <br>
+            Memory usage: N/A
+            <br>
+            Antialiasing power: none
+          </li>
+          <li>Bilinear sampling
+            <br>
+            Speed: slow
+            <br>
+            Memory usage: N/A
+            <br>
+            Antialiasing power: reduce jaggies
+          </li>
+        </ul>
+      </li>
+      <li>
+        Level sampling:
+        <ul>
+          <li>
+            Level 0 sampling
+            <br>
+            Speed: fastest
+            <br>
+            Memory usage: 1 texture
+            <br>
+            Antialiasing power: none
+          </li>
+          <li>
+            Nearest level sampling
+            <br>
+            Speed: fast
+            <br>
+            Memory usage: based on number of texture levels
+            <br>
+            Antialiasing power: better than nothing
+          </li>
+          <li>
+            Linear level sampling
+            <br>
+            Speed: slow
+            <br>
+            Memory usage: based on number of texture levels
+            <br>
+            Antialiasing power: smooth
+          </li>
+        </ul>
+      </li>
+      <li>
+        Number of samples per pixel:
+        <ul>
+          <li>
+            1 sample per pixel
+            <br>
+            Speed: fastest
+            <br>
+            Memory usage: N/A
+            <br>
+            Antialiasing power: none
+          </li>
+          <li>
+            16 samples per pixel
+            <br>
+            Speed: slow
+            <br>
+            Memory usage: N/A
+            <br>
+            Antialiasing power: smooth
+          </li>
+      </li>
+    </ol>
     </p>
     <div align="middle">
       <table style="width=100%">
         <tr>
           <td>
-            <img src="images/zero_nearest.png" align="middle" width="400px"/>
+            <img src="images/zero_nearest.png" align="middle" width="400px" />
             <figcaption align="middle">level 0 sampling and nearest-pixel sampling</figcaption>
           </td>
           <td>
-            <img src="images/zero_linear.png" align="middle" width="400px"/>
+            <img src="images/zero_linear.png" align="middle" width="400px" />
             <figcaption align="middle">level 0 sampling and linear pixel sampling</figcaption>
           </td>
         </tr>
         <br>
         <tr>
           <td>
-            <img src="images/nearest_nearest.png" align="middle" width="400px"/>
+            <img src="images/nearest_nearest.png" align="middle" width="400px" />
             <figcaption align="middle">nearest level sampling and nearest-pixel sampling</figcaption>
           </td>
           <td>
-            <img src="images/nearest_linear.png" align="middle" width="400px"/>
+            <img src="images/nearest_linear.png" align="middle" width="400px" />
             <figcaption align="middle">nearest level sampling and linear pixel sampling</figcaption>
           </td>
         </tr>
@@ -317,6 +340,9 @@
 
     <h3 align="middle">Part 7: Draw something interesting!</h3>
     <p>not participating :(</p>
+
+    <br><br>
+    <a href="https://neekrom.github.io/cs184-proj-webpage/proj1/index.html">link to webpage</a>
 
 </body>
 
