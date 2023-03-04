@@ -58,7 +58,26 @@
 
     <h2 align="middle">Overview</h2>
     <p>
-      YOUR RESPONSE GOES HERE
+      In this project, I worked on ray generation, ray tracing, creating bounding volume hierarchies, and illumination.
+      <br>
+      <br>
+      In part 1, I worked on camera ray generation from image coordinates to world coordinates, raytracing on pixels,
+      and primitive intersections of rays with triangles and spheres.
+      <br>
+      In part 2, I work on optimizing the raytracing process by creating bounding volume hierarchies in order to speed
+      up the raytracing process. By using BVHs, I can prune the search space for intersections by ignoring primitives
+      that are in a larger bounding box that the ray does not intersect.
+      <br>
+      In part 3, I work on direct illumination by implementing a hemisphere and important lighting function that
+      calculates the illumination on a surface from a light source.
+      <br>
+      In part 4, I work on global illumination by not only including direct illumination of light rays from a light
+      source to an object, but also how light rays bounce off objects onto other objects and affect the illumination of
+      the scenery.
+      <br>
+      Finally, in part 5, I work on optimizing the raytracing process by implementing adaptive sampling. This means that
+      for some pixels that converge relatively quickly, I can pre-emptively stop sampling rays for that pixel and move
+      on to the next pixel since any further samples would likely not contribute much to the final color of the pixel.
     </p>
     <br>
 
@@ -259,6 +278,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
       for a given light, we add the samples divided by the number of samples we used to the output, and ultimately
       return this lighting output.
     </p>
+    <br>
 
     <h3>
       Show some images rendered with both implementations of the direct lighting function.
@@ -370,7 +390,13 @@ You will probably want to use the instructional machines for the above renders i
       Walk through your implementation of the indirect lighting function.
     </h3>
     <p>
-      YOUR RESPONSE GOES HERE
+      First, I reuse my old code in one_bounce_radiance and add that to L_out. Then I use the pseudocode from lecture as
+      a guide for the rest of the function. I set my termination probability to be 0.35 arbitrarily (middle of the 0.3 -
+      0.4 range given), and if the russian roulette check passes, I perform much of the same operations as I do in the
+      other lighting functions. I sample a ray from the intersection, create a new ray incident to the intersection and
+      reduce the new ray's depth by one. Then, if the new ray's depth is greater than 0 and it intersects an object, I
+      recursively call the indirect lighting function and use that to add to L_out using the formula outlined in
+      lecture.
     </p>
     <br>
 
@@ -382,12 +408,12 @@ You will probably want to use the instructional machines for the above renders i
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>example1.dae</figcaption>
+            <img src="images/p4-banana.png" align="middle" width="400px" />
+            <figcaption>banana.dae</figcaption>
           </td>
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>example2.dae</figcaption>
+            <img src="images/p4-dragon.png" align="middle" width="400px" />
+            <figcaption>dragon.dae</figcaption>
           </td>
         </tr>
       </table>
@@ -406,19 +432,25 @@ You will probably want to use the instructional machines for the above renders i
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>Only direct illumination (example1.dae)</figcaption>
+            <img src="images/p4-spheres-d.png" align="middle" width="400px" />
+            <figcaption>Only direct illumination (CBspheres_lambertian.dae)</figcaption>
           </td>
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>Only indirect illumination (example1.dae)</figcaption>
+            <img src="images/p4-spheres-i.png" align="middle" width="400px" />
+            <figcaption>Only indirect illumination (CBspheres_lambertian.dae)</figcaption>
           </td>
         </tr>
       </table>
     </div>
     <br>
     <p>
-      YOUR EXPLANATION GOES HERE
+      If we only use direct illumination, we can see that the ceiling of the room is completely dark, save for the light
+      source itself. We can also see that only the tops of the spheres are illuminated, while the bottoms are cast in
+      shadow along with the floor where the sphere's direct shadow would be. When looking at the image of only indirect
+      illumination, the spheres themselves are mostly illuminated, and they even have hints of red and blue from the
+      lighting that is bouncing off the left red and right blue walls. The ceiling is completely lit up to reveal that
+      it is white, and by contrast the tops of the spheres are darker than the bottoms. The shadows on the floor are
+      also not as dark, with only the direct bottoms of the spheres being cast in shadow.
     </p>
     <br>
 
@@ -432,27 +464,27 @@ You will probably want to use the instructional machines for the above renders i
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
+            <img src="images/p4-bunny-m0.png" align="middle" width="400px" />
             <figcaption>max_ray_depth = 0 (CBbunny.dae)</figcaption>
           </td>
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
+            <img src="images/p4-bunny-m1.png" align="middle" width="400px" />
             <figcaption>max_ray_depth = 1 (CBbunny.dae)</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
+            <img src="images/p4-bunny-m2.png" align="middle" width="400px" />
             <figcaption>max_ray_depth = 2 (CBbunny.dae)</figcaption>
           </td>
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
+            <img src="images/p4-bunny-m3.png" align="middle" width="400px" />
             <figcaption>max_ray_depth = 3 (CBbunny.dae)</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
+            <img src="images/p4-bunny-m100.png" align="middle" width="400px" />
             <figcaption>max_ray_depth = 100 (CBbunny.dae)</figcaption>
           </td>
         </tr>
@@ -460,59 +492,77 @@ You will probably want to use the instructional machines for the above renders i
     </div>
     <br>
     <p>
-      YOUR EXPLANATION GOES HERE
+      With m=0, we only see the light source on the ceiling and nothing else since we are only seeing light that has no
+      bouncing at all, so all the light coming from the scene to the camera is just the light emitting from the light
+      source.
+      <br>
+      With m=1, we get only the direct lighting, so only light rays that directly come from the light source to an
+      object are visible. Similar to the direct illumination image of the spheres from the previous section, the ceiling
+      is completely black and the shadows on the floor are very dark while the top of the bunny is bright.
+      <br>
+      When m=2, we start to see some of the indirect illumination come through. The ceiling is now lit up, and the
+      bottom sides of the bunny have light on them now, with the left side of the bunny having some red color from the
+      red wall and the right side having some blue color from the blue wall. The shadows on the floor are not as dark as
+      they were before.
+      <br>
+      When m=3, the shadows on the floor are even lighter than they were when m=2, and we see more of the red and blue
+      colors on the bunny from the walls. In general, there appears to be more light in the scene.
+      <br>
+      For m=100, we see similar effects of the step between m=2 and m=3, though it is harder to see. The room does
+      appear to be brighter.
     </p>
     <br>
 
     <h3>
       Pick one scene and compare rendered views with various sample-per-pixel rates, including at least 1, 2,
       4, 8,
-      16, 64, and 1024. Use 4 light rays.
+      16, 64, and 1024. Use 4 light rays. I used m=5 depth.
     </h3>
     <!-- Example of including multiple figures -->
     <div align="middle">
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>1 sample per pixel (example1.dae)</figcaption>
+            <img src="images/p4-spheres-s1.png" align="middle" width="400px" />
+            <figcaption>1 sample per pixel (CBspheres_lambertian.dae)</figcaption>
           </td>
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>2 samples per pixel (example1.dae)</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>4 samples per pixel (example1.dae)</figcaption>
-          </td>
-          <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>8 samples per pixel (example1.dae)</figcaption>
+            <img src="images/p4-spheres-s2.png" align="middle" width="400px" />
+            <figcaption>2 samples per pixel (CBspheres_lambertian.dae)</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>16 samples per pixel (example1.dae)</figcaption>
+            <img src="images/p4-spheres-s4.png" align="middle" width="400px" />
+            <figcaption>4 samples per pixel (CBspheres_lambertian.dae)</figcaption>
           </td>
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>64 samples per pixel (example1.dae)</figcaption>
+            <img src="images/p4-spheres-s8.png" align="middle" width="400px" />
+            <figcaption>8 samples per pixel (CBspheres_lambertian.dae)</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>1024 samples per pixel (example1.dae)</figcaption>
+            <img src="images/p4-spheres-s16.png" align="middle" width="400px" />
+            <figcaption>16 samples per pixel (CBspheres_lambertian.dae)</figcaption>
+          </td>
+          <td>
+            <img src="images/p4-spheres-s64.png" align="middle" width="400px" />
+            <figcaption>64 samples per pixel (CBspheres_lambertian.dae)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="images/p4-spheres-s1024.png" align="middle" width="400px" />
+            <figcaption>1024 samples per pixel (CBspheres_lambertian.dae)</figcaption>
           </td>
         </tr>
       </table>
     </div>
     <br>
     <p>
-      YOUR EXPLANATION GOES HERE
+      As we increase the number of samples per pixel, the image gradually becomes less noisy, with the jump between 64
+      and 1024 samples being the most notable. The 1024 samples per pixel image is much clearer than the other images.
     </p>
     <br>
 
@@ -525,7 +575,18 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
       Explain adaptive sampling. Walk through your implementation of the adaptive sampling.
     </h3>
     <p>
-      YOUR RESPONSE GOES HERE
+      Adaptive sampling is an optimization to pixel raytracing by reducing the number of samples we calculate for a
+      pixel that we determined has converged. At a high level, for each pixel whenever we calculate samplesPerBatch
+      number of samples for that pixel, we check if the pixel has converged with a 95% confidence, and if it has, then
+      we stop sampling for that pixel.
+      <br>
+      <br>
+      In my particular implementation of adaptive sampling, I keep track of s1 and s2 variables which are the summations
+      of each sample's illumination and the square of each sample's illumination respectively. Whenever I calculate
+      samplesPerBatch number of samples for a pixel, I check if the pixel has converged with a 95% confidence by
+      calculating the mean and variance of the samples so far, defining a variable
+    <pre align="middle">I = 1.96 * σ / sqrt(n)</pre> If this value is less than or equal to the max tolerance * mean,
+    then I consider it converged and stop sampling for the pixel.
     </p>
     <br>
 
@@ -542,22 +603,22 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
       <table style="width:100%">
         <tr align="center">
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>Rendered image (example1.dae)</figcaption>
+            <img src="images/p5-walle.png" align="middle" width="400px" />
+            <figcaption>Rendered image (wall-e.dae)</figcaption>
           </td>
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>Sample rate image (example1.dae)</figcaption>
+            <img src="images/p5-walle-r.png" align="middle" width="400px" />
+            <figcaption>Sample rate image (wall-e.dae)</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>Rendered image (example2.dae)</figcaption>
+            <img src="images/p5-spheres.png" align="middle" width="400px" />
+            <figcaption>Rendered image (CBspheres_lambertian.dae)</figcaption>
           </td>
           <td>
-            <img src="images/your_file.png" align="middle" width="400px" />
-            <figcaption>Sample rate image (example2.dae)</figcaption>
+            <img src="images/p5-spheres-r.png" align="middle" width="400px" />
+            <figcaption>Sample rate image (CBspheres_lambertian.dae)</figcaption>
           </td>
         </tr>
       </table>
