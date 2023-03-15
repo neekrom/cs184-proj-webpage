@@ -1,7 +1,205 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 3-2 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <style>
+    /* div.padded {
+      padding-top: 0px;
+      padding-right: 100px;
+      padding-bottom: 0.25in;
+      padding-left: 100px;
+    } */
+
+    body {
+      background-color: white;
+      padding: 100px;
+      width: 1000px;
+      margin: auto;
+      text-align: left;
+      font-weight: 300;
+      font-family: 'Open Sans', sans-serif;
+      color: #121212;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+  </style>
+  <title>Tyler Sameshima | CS 184</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+</head>
+
+<body>
+  <br />
+  <h1 align="middle">Assignment 3-2: Additional Features to PathTracer</h1>
+  <h2 align="middle">Tyler Sameshima</h2>
+  <h2 align="middle"><a href="https://neekrom.github.io/cs184-proj-webpage/proj3-2/index.html">webpage link</a></h2>
+
+  <div class="padded">
+
+
+    * NOTE: For this project, you will choose TWO out of the four given parts to complete. One of those parts must
+    be Part 1 or Part 2. In other words, you can choose any combination of two parts except the pair (Part 3, Part
+    4).
+
+
+    <h3 align="middle">Part 1. Mirror and Glass Materials</h3>
+
+    <p><b>
+        Show a sequence of six images of scene `CBspheres.dae` rendered with `max_ray_depth` set to 0, 1, 2, 3,
+        4, 5, and 100. The other settings should be at least 64 samples per pixel and 4 samples per light. Make
+        sure to include all screenshots.
+      </b></p>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/spheres-0.png" align="middle" width="400px" />
+            <figcaption>m=0</figcaption>
+          </td>
+          <td>
+            <img src="images/spheres-1.png" align="middle" width="400px" />
+            <figcaption>m=1</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="images/spheres-2.png" align="middle" width="400px" />
+            <figcaption>m=2</figcaption>
+          </td>
+          <td>
+            <img src="images/spheres-3.png" align="middle" width="400px" />
+            <figcaption>m=3</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="images/spheres-4.png" align="middle" width="400px" />
+            <figcaption>m=4</figcaption>
+          </td>
+          <td>
+            <img src="images/spheres-5.png" align="middle" width="400px" />
+            <figcaption>m=5</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="images/spheres-100.png" align="middle" width="400px" />
+            <figcaption>m=100</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <p><b>
+        Point out the new multibounce effects that appear in each image.
+      </b></p>
+    <p>
+      Going from m=0 to m=1, we can see the light hitting the walls and the floors, as well as a bit on the balls
+      themselves. In m=2, the ceiling gets lit up, and we can see the mirror ball reflecting the floor and walls but not
+      the ceiling yet. The glass ball is still quite dark, though we can see a bit of the room that is reflected from
+      the mirror ball. In m=3, we can see the mirror ball now has the ceiling lit up, and near the bottom, we get a hint
+      of red from the red reflecting off the wall to the floor to the ball. The glass ball finally gets some good color,
+      as we can see how it refracts the light coming to it. The floor beneath the glass ball gets a caustic of light. In
+      m=4, the reflection of the glass ball in the mirror ball finally gets some color, with it looking blue like the
+      wall behind you. The bottom of the glass ball also shows the caustic beneath it. There is also a new light spot on
+      the blue wall from the glass ball. From m=4 to m=5, we don't really see any new multibounce effects. At m=100, we
+      don't see anything especially new either.
+    </p>
+    <br>
+    <p><b>
+        Explain how these bounce numbers relate to the particular effects that appear. Make sure to include all
+        screenshots.
+      </b></p>
+    <p>
+      At m=0, we only see the direct light sources, since the light rays coming from the light source to the camera are
+      the only ones that should be visible. At m=1, we can additionally see lights that bounce once off an object into
+      the camera. Therefore, we see the walls and floors, as well as the parts of the balls that reflect the light
+      source into the camera. At m=2, the ceiling is now lit up from light reflected from other parts of the scene. In
+      addition, the mirror ball can now reflect parts of the scene that have bounced once into the ball. At m=3, the
+      mirror ball can now reflect the light rays that have bounced twice, so we see the ceiling and part of the red
+      shadow of the left wall reflected in the ball. The light rays going into the glass ball can now fully refract
+      through and hit the camera. At m=4, the mirror ball can reflect the can now also reflect the light coming from the
+      glass ball. The bottom of the glass ball can also now refract the light rays coming from its caustic, and we see
+      another light spot on the blue wall.
+    </p>
+    <br>
+
+
+    <h3 align="middle">Part 2. Microfacet Material</h3>
+    <p><b>
+        Show a screenshot sequence of 4 images of scene `CBdragon_microfacet_au.dae` rendered with $\alpha$ set
+        to 0.005, 0.05, 0.25 and 0.5. The other settings should be at least 128 samples per pixel and 1 samples
+        per light. The number of bounces should be at least 5. Describe the differences between different
+        images. Note that, to change the $\alpha$, just open the .dae file and search for `microfacet`.
+      </b></p>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/dragon-0005.png" align="middle" width="400px" />
+            <figcaption>alpha=0.005</figcaption>
+          </td>
+          <td>
+            <img src="images/dragon-005.png" align="middle" width="400px" />
+            <figcaption>alpha=0.05</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="images/dragon-025.png" align="middle" width="400px" />
+            <figcaption>alpha=0.25</figcaption>
+          </td>
+          <td>
+            <img src="images/dragon-05.png" align="middle" width="400px" />
+            <figcaption>alpha=0.5</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <p><b>
+        Show two images of scene `CBbunny_microfacet_cu.dae` rendered using cosine hemisphere sampling (default)
+        and your importance sampling. The sampling rate should be fixed at 64 samples per pixel and 1 samples
+        per light. The number of bounces should be at least 5. Briefly discuss their difference.
+      </b></p>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="images/bunny-h.png" align="middle" width="400px" />
+            <figcaption>cosine hemisphere sampling</figcaption>
+          </td>
+          <td>
+            <img src="images/bunny-i.png" align="middle" width="400px" />
+            <figcaption>importance sampling</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <p>
+      The cosine hemisphere sampling image has signficantly more noise than the importance sampling image, especially on
+      the bunny itself. We can see a bit of the walls and ceiling reflected in the metal bunny, but there are a lot more
+      white dot noisiness compared to the importance sampling image. In that image, there is still some white noise, but
+      the bunny looks significantly better and recognizable.
+    </p>
+    <br>
+    <p><b>
+        Show at least one image with some other conductor material, replacing `eta` and `k`. Note that you
+        should look up values for real data rather than modifying them arbitrarily. Tell us what kind of
+        material your parameters correspond to.
+      </b></p>
+    <div align="middle">
+      <img src="images/bunny-al.png" align="middle" width="400px" />
+      <figcaption>aluminum bunny!!!</figcaption>
+    </div>
+    <br>
+
+  </div>
+</body>
+
 </html>
